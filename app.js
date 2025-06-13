@@ -1,36 +1,41 @@
-// Local mock database
-let requests = [];
+async function fetchRequests() {
+      const res = await fetch('/get');
+      const data = await res.json();
+      const list = document.getElementById('requestsList');
+      list.innerHTML = '';
+      data.forEach(req => {
+        list.innerHTML += `
+          <div>
+            <strong>${req.type}</strong> - ${req.location}<br>
+            ${req.description}<br>
+            <small>By ${req.name}</small>
+            <button onclick="deleteRequest(${req.id})">✅ Solved</button>
+          </div><hr>`;
+      });
+    }
 
-const form = document.getElementById('requestForm');
-const listContainer = document.getElementById('requestsList');
+    async function deleteRequest(id) {
+      await fetch(`/delete/${id}`, { method: 'DELETE' });
+      fetchRequests();
+    }
 
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+    document.getElementById('requestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        type: form.type.value,
+        location: form.location.value,
+        description: form.description.value
+      };
+      await fetch('/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      form.reset();
+      fetchRequests();
+    });
 
-  const newRequest = {
-    name: document.getElementById('name').value,
-    type: document.getElementById('type').value,
-    location: document.getElementById('location').value,
-    description: document.getElementById('description').value,
-    timestamp: new Date().toLocaleString()
-  };
-
-  requests.push(newRequest);
-  form.reset();
-  displayRequests();
-});
-
-function displayRequests() {
-  listContainer.innerHTML = '';
-
-  requests.forEach((req, index) => {
-    const card = document.createElement('div');
-    card.className = 'request-card';
-    card.innerHTML = `
-      <strong>${req.type}</strong> - <em>${req.location}</em><br>
-      ${req.description}<br>
-      <small>Requested by: ${req.name} at ${req.timestamp}</small>
-    `;
-    listContainer.appendChild(card);
-  });
-}
+    fetchRequests();
+  

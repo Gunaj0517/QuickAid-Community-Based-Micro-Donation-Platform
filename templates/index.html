@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QuickAid</title>
+  <link rel="stylesheet" href="/static/style.css">  
+</head>
+<body>
+  <h1>QuickAid 🩸</h1>
+
+  <form action="/add" method="POST">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="text" name="type" placeholder="Type of Help (e.g. Blood)">
+    <input type="text" name="location" placeholder="Location">
+    <textarea name="description" placeholder="Describe the need"></textarea>
+    <button type="submit">Submit Request</button>
+  </form>
+
+  <h2>📍 All Active Requests</h2>
+
+  {% if requests %}
+    <ul>
+      {% for r in requests %}
+        <li>
+          <strong>{{ r['type'] }}</strong> requested by {{ r['name'] }} at {{ r['location'] }}<br>
+          📝 {{ r['description'] }}<br>
+          <small><em>{{ r['timestamp'] }}</em></small><br>
+
+          <!-- Optional: Delete button -->
+          <form method="POST" action="/delete/{{ r['id'] }}" onsubmit="return confirm('Delete this request?')">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" style="background: gray;">Delete</button>
+          </form>
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No requests yet.</p>
+  {% endif %}
+
+  <script src="app.js"></script>
+</body>
+</html>
