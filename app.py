@@ -55,11 +55,11 @@ def get_requests():
     return jsonify(rows)
 
 # Delete a request
-@app.route('/delete/<int:rid>', methods=['DELETE'])
-def delete_request(rid):
+@app.route('/delete/<int:rid>', methods=['POST'])
+def delete_request_post(rid):
     with sq3.connect('database.db') as conn:
         conn.execute('DELETE FROM requests WHERE id = ?', (rid,))
-    return jsonify({'status': 'deleted'})
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
