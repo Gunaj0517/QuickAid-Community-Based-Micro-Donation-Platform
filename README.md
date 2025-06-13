@@ -1,0 +1,1 @@
+# QuickAid-Community-Based-Micro-Donation-Platform
